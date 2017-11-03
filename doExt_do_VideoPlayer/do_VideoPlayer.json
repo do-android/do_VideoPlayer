@@ -1,0 +1,68 @@
+{
+  "ID": "do_VideoPlayer",
+  "IsContainer": "0",
+  "Type": "SM",
+  "UIType": "Layout",
+  "Name": "视频播放器",
+  "Version": "Internal",
+  "Description": "支持边下边播，视频播放宽高比例为16:9，自动横屏",
+  "Icon": "",
+  "BBS": "",
+  "Keyword": "",
+  "IOS": {
+    "Support": 0,
+    "MinVersion": ""
+  },
+  "Android": {
+    "Support": 0,
+    "MinVersion": ""
+  },
+  "Windows": {
+    "Support": 0,
+    "MinVersion": ""
+  },
+  "WindowsPhone": {
+    "Support": 0,
+    "MinVersion": ""
+  },
+  "Html": {
+    "Support": 1,
+    "MinVersion": "5.0"
+  },
+  "Properties": [],
+  "Events": [],
+  "syncMethodes": [
+    {
+      "ID": "play",
+      "Name": "播放视频",
+      "Description": "",
+      "ReturnType": "",
+      "ReturnType_JavaScript": "",
+      "ReturnDesc": "",
+      "Paras": [
+        {
+          "ID": "path",
+          "Name": "播放文件源路径",
+          "Type": "String",
+          "Type_JavaScript": "String",
+          "Required": 1,
+          "DefaultValue": "",
+          "Description": "支持initdata://、data://、source://和网络地址",
+          "Deprecated": false
+        },
+        {
+          "ID": "point",
+          "Name": "播放起点",
+          "Type": "Number",
+          "Type_JavaScript": "Number",
+          "Required": 0,
+          "DefaultValue": "0",
+          "Description": "从视频中的某一点开始播放，毫秒值",
+          "Deprecated": false
+        }
+      ],
+      "Deprecated": false
+    }
+  ],
+  "asyncMethodes": []
+}

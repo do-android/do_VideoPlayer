@@ -1,0 +1,9 @@
+*.class
+*.apk
+bin/
+gen/
+.settings/
+proguard/
+*.classpath
+
+/doExt_do_VideoPlayer/do_VideoPlayer.zip
