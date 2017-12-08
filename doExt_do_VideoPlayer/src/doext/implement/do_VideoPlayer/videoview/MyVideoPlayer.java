@@ -89,7 +89,6 @@ public class MyVideoPlayer implements OnBufferingUpdateListener, OnErrorListener
 			this.imageViewFullscreen.setOnClickListener(this);
 		}
 		mCurrentState = STATE_IDLE;
-
 	}
 
 //	@SuppressLint("NewApi")
@@ -219,6 +218,10 @@ public class MyVideoPlayer implements OnBufferingUpdateListener, OnErrorListener
 		this.mVideoPlayerPreparedListener = listener;
 	}
 
+	public void setOnVideoPlayerCloseLoadingListener(OnVideoPlayerCloseLoadingListener listener) {
+		this.mOnVideoPlayerCloseLoadingListener = listener;
+	}
+
 	public void setOnFullScreenClickListener(OnFullScreenClickListener listener) {
 		this.mFullScreenClickListener = listener;
 	}
@@ -241,6 +244,9 @@ public class MyVideoPlayer implements OnBufferingUpdateListener, OnErrorListener
 			start();
 		}
 		show(sDefaultTimeout);
+		if (mOnVideoPlayerCloseLoadingListener != null) {
+			mOnVideoPlayerCloseLoadingListener.onCloseLoading();
+		}
 		Log.e("mediaPlayer", "onPrepared");
 	}
 
@@ -371,9 +377,9 @@ public class MyVideoPlayer implements OnBufferingUpdateListener, OnErrorListener
 			mEndTime.setText(stringForTime(duration));
 		if (mCurrentTime != null)
 			mCurrentTime.setText(stringForTime(position));
-		
-		Log.e("mediaPlayer", "duration : "+ duration + "; text : "+stringForTime(duration));
-		Log.e("mediaPlayer", "position : "+ position + "; text : "+stringForTime(position));
+
+		Log.e("mediaPlayer", "duration : " + duration + "; text : " + stringForTime(duration));
+		Log.e("mediaPlayer", "position : " + position + "; text : " + stringForTime(position));
 		return position;
 	}
 
@@ -393,9 +399,14 @@ public class MyVideoPlayer implements OnBufferingUpdateListener, OnErrorListener
 	}
 
 	private OnVideoPlayerPreparedListener mVideoPlayerPreparedListener;
+	private OnVideoPlayerCloseLoadingListener mOnVideoPlayerCloseLoadingListener;
 
 	public interface OnVideoPlayerPreparedListener {
 		public void onPrepared(MediaPlayer mediaPlayer);
+	}
+
+	public interface OnVideoPlayerCloseLoadingListener {
+		public void onCloseLoading();
 	}
 
 	private OnFullScreenClickListener mFullScreenClickListener;

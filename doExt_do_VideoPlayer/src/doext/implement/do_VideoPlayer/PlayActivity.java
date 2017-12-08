@@ -1,6 +1,7 @@
 package doext.implement.do_VideoPlayer;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -15,9 +16,13 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -32,9 +37,10 @@ import core.object.DoSingletonModule;
 import doext.implement.do_VideoPlayer.orientation.OrientationSensorUtils;
 import doext.implement.do_VideoPlayer.videoview.MyVideoPlayer;
 import doext.implement.do_VideoPlayer.videoview.MyVideoPlayer.OnFullScreenClickListener;
+import doext.implement.do_VideoPlayer.videoview.MyVideoPlayer.OnVideoPlayerCloseLoadingListener;
 import doext.implement.do_VideoPlayer.videoview.MyVideoPlayer.OnVideoPlayerPreparedListener;
 
-public class PlayActivity extends Activity implements OnVideoPlayerPreparedListener, OnFullScreenClickListener, DoIModuleTypeID {
+public class PlayActivity extends Activity implements OnVideoPlayerPreparedListener, OnFullScreenClickListener, DoIModuleTypeID, OnVideoPlayerCloseLoadingListener {
 	private int width = -1;
 	private int height = -1;
 
@@ -129,10 +135,11 @@ public class PlayActivity extends Activity implements OnVideoPlayerPreparedListe
 		rootView.addView((View) videoView, computeContainerSize(this, 16, 9));
 		videoPlayer.setOnFullScreenClickListener(this);
 		videoPlayer.setOnVideoPlayerPreparedListener(this);
+		videoPlayer.setOnVideoPlayerCloseLoadingListener(this);
 
 		mOrientationSensorUtils = new OrientationSensorUtils(this, mHandler);
 		mOrientationSensorUtils.onResume();
-
+		iniProgressBar();
 	}
 
 	@Override
@@ -286,4 +293,41 @@ public class PlayActivity extends Activity implements OnVideoPlayerPreparedListe
 		return "";
 	}
 
+	ProgressDialog loadDialog;
+
+	private void iniProgressBar() {
+		LayoutInflater layoutInflater = LayoutInflater.from(this);
+		int do_videoview_id = DoResourcesHelper.getIdentifier("videoplayer_loading", "layout", this);
+		View view = layoutInflater.inflate(do_videoview_id, null);// 得到加载view
+		// 获取view对象中的ImageView
+		int videoplayer_loading_img_id = DoResourcesHelper.getIdentifier("videoplayer_loading_img", "id", this);
+		ImageView imageView = (ImageView) view.findViewById(videoplayer_loading_img_id);
+		// 加载动画
+		Animation animation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		animation.setDuration(1500);
+		animation.setRepeatMode(Animation.RESTART);
+		animation.setRepeatCount(-1);
+		animation.setStartOffset(-1);
+		LinearInterpolator lin = new LinearInterpolator();
+		animation.setInterpolator(lin);
+		// 设置动画
+		imageView.startAnimation(animation);
+		loadDialog = new ProgressDialog(this);// 创建自定义样式dialog
+		loadDialog.setCancelable(false);// 不可以用“返回键”取消
+		loadDialog.show();
+		// 设置布局
+		WindowManager.LayoutParams params = loadDialog.getWindow().getAttributes();
+		params.dimAmount = 0f;// 控制弹出后后面背景底色
+		loadDialog.getWindow().setGravity(Gravity.CENTER);
+		loadDialog.getWindow().setLayout(100, 100);
+		loadDialog.setContentView(view, params);
+	}
+
+	//关闭加载进度条
+	@Override
+	public void onCloseLoading() {
+		if (null != loadDialog) {
+			loadDialog.dismiss();
+		}
+	}
 }
